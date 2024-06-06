@@ -3,10 +3,7 @@ import 'package:macos_ui/macos_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:setting/pages/home/view.dart';
 import 'package:setting/pages/themes/theme.dart';
-
-import 'pages/bluetooth/view.dart';
-import 'pages/network/view.dart';
-import 'pages/wifi/view.dart';
+import 'package:window_manager/window_manager.dart';
 
 Future<void> configureMacosWindowUtils() async {
   const config = MacosWindowUtilsConfig(
@@ -16,7 +13,21 @@ Future<void> configureMacosWindowUtils() async {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await configureMacosWindowUtils();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(800, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
 
   runApp(const AppPage());
 }
